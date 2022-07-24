@@ -25,7 +25,8 @@ class client:
         self.s.send(cwd.encode())
 
         print(cwd)
-    async def filecreate(self):
+    def filecreate(self):
+        os.chdir("test")
         filename = self.s.recv(1024).decode("utf-8")
         data = self.s.recv(1024).decode('utf-8')
         self.file = open(filename,"w")
@@ -57,8 +58,7 @@ class client:
                     # if operation is successful, empty message
                     output = ""
             elif splited_command[0].lower() == "cfile":
-                os.chdir("test")
-                await self.filecreate()
+                self.filecreate()
 
                 output = "*FILE CREATED*"
 
@@ -75,10 +75,9 @@ class client:
 
 klient = client(HOST,PORT,SEPARATOR,s)
 async def main():
-    asyncio.gather(
+   await asyncio.gather(
     klient.startconnection(),
     klient.shell(),
-    klient.filecreate(),
 
     )
 asyncio.run(main())
